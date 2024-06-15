@@ -2,23 +2,26 @@
 
 The `rpm-ostree-override` module allows replacing packages already included in the base image using `rpm-ostree override`.
 
-The module first downloads the repository file from repository declared under `repo:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
+The module first downloads the repository file from repository declared under `from-repo:` into `/etc/yum.repos.d/`. The magic string `%OS_VERSION%` is substituted with the current VERSION_ID (major Fedora version), which can be used, for example, for pulling correct versions of repositories from [Fedora's Copr](https://copr.fedorainfracloud.org/).
 
-The module then replaces the packages declared under `replace:` using `rpm-ostree override replace`.
+The module then replaces the packages declared under `packages:` using `rpm-ostree override replace`.
 
 Lastly, the repository file is removed from `/etc/yum.repos.d/`.
 
-The module can only replace packages from one repository at a time. If you want to do multiple replacements from different repositories, use the module again separately for all the repositories you wish to replace packages from.
+The module can be used to replace packages from multiple repositories, check out the example configuration on how to do that.
 
 ### Example Configuration
 
 ```yaml
 type: rpm-ostree-override
-repo: https://copr.fedorainfracloud.org/coprs/trixieua/mutter-patched/repo/fedora-%OS_VERSION%/trixieua-mutter-patched-fedora-%OS_VERSION%.repo
 replace:
-    - gnome-shell
-    - mutter
-    - mutter-common
-    - xorg-x11-server-Xwayland
-    - gdm
+  - from-repo: https://repository1_URL.repo
+    packages:
+        - package1
+        - package2
+  - from-repo: https://repository2_URL.repo
+    packages:
+        - package3
+        - package4
+        - package5
 ```
