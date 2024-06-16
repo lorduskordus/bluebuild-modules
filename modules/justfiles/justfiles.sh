@@ -23,7 +23,9 @@ fi
 # For every folder/file user specified, do
 for selected in "${CONFIG_SELECTION[@]}"; do
 
-    echo "---------- Adding folder/file '${selected}' ---------"
+    echo "----------------------------------------------------------"
+    echo "------------ Adding folder/file '${selected}' ------------"
+    echo "----------------------------------------------------------"
 
     # Find all justfiles, starting from 'selected' and get their paths
     JUSTFILES=($(find "${CONFIG_FOLDER}/${selected}" -type f -name "*.just" | sed "s|${CONFIG_FOLDER}/||g"))
@@ -78,7 +80,5 @@ for selected in "${CONFIG_SELECTION[@]}"; do
         fi
 
     done
-    
-    echo "------------------------------------------------"
 
 done
