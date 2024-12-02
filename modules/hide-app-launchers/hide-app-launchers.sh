@@ -1,6 +1,8 @@
+#!/usr/bin/env bash
+
 set -euo pipefail
 
-get_yaml_array APPS_TO_HIDE '.hide[]' "$1"
+get_json_array APPS_TO_HIDE 'try .["hide"][]' "$1"
 
 if [[ ${#APPS_TO_HIDE[@]} == 0 ]]; then
     echo "Error: No apps specified."
