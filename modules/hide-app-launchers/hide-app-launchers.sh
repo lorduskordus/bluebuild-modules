@@ -35,4 +35,4 @@ for APP in "${APPS_TO_HIDE[@]}"; do
     fi
 done
 
-echo "All app launchers hidden successfuly."
+echo "All app launchers hidden successfully."
