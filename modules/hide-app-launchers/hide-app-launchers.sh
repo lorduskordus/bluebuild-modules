@@ -28,7 +28,7 @@ fi
 
 for APP in "${APPS_TO_HIDE[@]}"; do
     if sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nNoDisplay=true@g' ${APP_LAUNCHERS_LOCATION}/${APP}.desktop; then
-        echo "- Successfuly hidden '${APP}.desktop'."
+        echo "- Successfully hidden '${APP}.desktop'."
     else
         echo "Error: Failed to hide '${APP}.desktop'."
         exit 1
