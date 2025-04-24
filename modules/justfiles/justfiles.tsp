@@ -13,6 +13,9 @@ model JustfilesModuleV1 {
    */
   type: "justfiles" | "justfiles@v1" | "justfiles@latest";
 
+  /** Whether to import lines in ublue's '60-custom.just' for usage with the `ujust` command. If false, the lines are imported to '/usr/bluebuild/justfiles/justfile' and the 'bjust' command can be used instead. */
+  using-ujust?: boolean = true;
+
   /** Whether to validate the syntax of the justfiles against `just --fmt`. (warning: can be very unforgiving) */
   validate?: boolean = false;
 

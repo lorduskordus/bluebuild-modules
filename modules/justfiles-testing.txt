@@ -1,0 +1,15 @@
+echo -e "\nbjust\n"
+cat /usr/bin/bjust || true
+echo -e "\nbjust\n"
+
+echo -e "\njustfile\n"
+cat /usr/share/bluebuild/justfiles/justfile || true
+echo -e "\njustfile\n"
+
+echo -e "\njustfile ublue-os\n"
+cat /usr/share/ublue-os/just/60-custom.just || true
+echo -e "\njustfile ublue-os\n"
+
+echo -e "\ntree\n"
+tree /usr/share/bluebuild/justfiles || true
+echo -e "\ntree\n"

@@ -4,8 +4,9 @@ set -euo pipefail
 
 get_json_array CONFIG_SELECTION 'try .["include"][]' "$1"
 VALIDATE="$(echo "$1" | jq -r 'try .["validate"]')"
+USING_UJUST="$(echo "$1" | jq -r 'try .["using-ujust"]')"
 
-IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
+MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
 CONFIG_FOLDER="${CONFIG_DIRECTORY}/justfiles"
 DEST_FOLDER="/usr/share/bluebuild/justfiles"
 
@@ -14,6 +15,37 @@ if [ ! -d "${CONFIG_FOLDER}" ]; then
     echo "Error: The config folder '${CONFIG_FOLDER}' was not found."
     exit 1
 fi
+
+# Install just if not present
+echo "Checking if package 'just' is installed"
+if ! rpm -q just &> /dev/null; then
+    echo "- Package is not installed, installing..."
+    dnf5 install -y just
+else
+    echo "- Package is installed."
+fi
+
+# Import to '60-custom.just' by default (uBlue) else to 'justfile' in the bluebuild folder
+if [ "${USING_UJUST}" == "false" ]; then
+    IMPORT_FILE="${DEST_FOLDER}/justfile"
+
+    mkdir -p "${DEST_FOLDER}"
+    
+    if [ ! -f "${IMPORT_FILE}" ]; then
+        cp "${MODULE_DIRECTORY}/justfiles/justfile" "${IMPORT_FILE}"
+    fi
+
+    if [ ! -f "/usr/bin/bjust" ]; then
+        install -o root -g root -m 755 "${MODULE_DIRECTORY}/justfiles/bjust" /usr/bin/bjust
+    fi
+else
+    IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
+    
+    if [ ! -f "${IMPORT_FILE}" ]; then
+        touch "${IMPORT_FILE}"
+    fi
+fi
+echo "Import lines will be written in: '${IMPORT_FILE}'"
 
 # Include all files in the folder if none specified
 if [[ ${#CONFIG_SELECTION[@]} == 0 ]]; then
@@ -71,17 +103,13 @@ for SELECTED in "${CONFIG_SELECTION[@]}"; do
         IMPORT_LINE="import \"${DEST_FOLDER}/${JUSTFILE}\""
         
         # Skip the import line if it already exists, else append it to import file
-        if [[ -f "${IMPORT_FILE}" ]]; then
-          if grep -wq "${IMPORT_LINE}" "${IMPORT_FILE}"; then
-              echo "- Skipped: '${IMPORT_LINE}' (already present)"
-          else
-              echo "${IMPORT_LINE}" >> "${IMPORT_FILE}"
-              echo "- Added: '${IMPORT_LINE}'"
-          fi
-        else  
-            echo "${IMPORT_LINE}" > "${IMPORT_FILE}"
+        if grep -wq "${IMPORT_LINE}" "${IMPORT_FILE}"; then
+            echo "- Skipped: '${IMPORT_LINE}' (already present)"
+        else
+            echo "${IMPORT_LINE}" >> "${IMPORT_FILE}"
             echo "- Added: '${IMPORT_LINE}'"
-        fi  
+        fi
+
     done
 
 done
