@@ -45,7 +45,7 @@ else
         touch "${IMPORT_FILE}"
     fi
 fi
-echo "Import lines will be written in: '${IMPORT_FILE}'"
+echo "Import lines will be written to: '${IMPORT_FILE}'"
 
 # Include all files in the folder if none specified
 if [[ ${#CONFIG_SELECTION[@]} == 0 ]]; then
