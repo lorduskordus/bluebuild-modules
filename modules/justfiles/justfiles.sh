@@ -6,7 +6,7 @@ get_json_array CONFIG_SELECTION 'try .["include"][]' "$1"
 VALIDATE="$(echo "$1" | jq -r 'try .["validate"]')"
 USING_UJUST="$(echo "$1" | jq -r 'try .["using-ujust"]')"
 
-MODULE_DIRECTORY="${MODULE_DIRECTORY:-"/tmp/modules"}"
+MODULE_FOLDER="${MODULE_DIRECTORY}/justfiles"
 CONFIG_FOLDER="${CONFIG_DIRECTORY}/justfiles"
 DEST_FOLDER="/usr/share/bluebuild/justfiles"
 
@@ -14,6 +14,22 @@ DEST_FOLDER="/usr/share/bluebuild/justfiles"
 if [ ! -d "${CONFIG_FOLDER}" ]; then
     echo "Error: The config folder '${CONFIG_FOLDER}' was not found."
     exit 1
+fi
+
+# If USING_UJUST is specified, validate it
+# else 
+# Determine ujust usage from the base image or the presence of justfile
+if [ "${USING_UJUST}" != "null" ]; then
+    if [[ "${USING_UJUST}" != "true" && "${USING_UJUST}" != "false" ]]; then
+        echo "Error: The value of key 'using-ujust': '${USING_UJUST}' is not valid. It needs to be true or false."
+        exit 1
+    fi
+else
+    if [[ "${BASE_IMAGE}" =~ "ublue-os" || -f "/usr/share/ublue-os/justfile" ]]; then
+        USING_UJUST="true"
+    else
+        USING_UJUST="false"
+    fi
 fi
 
 # Install just if not present
@@ -25,23 +41,26 @@ else
     echo "- Package is installed."
 fi
 
-# Import to '60-custom.just' by default (uBlue) else to 'justfile' in the bluebuild folder
+# Import to 'justfile' in the bluebuild folder & create the 'bjust' command
+# OR
+# Import to uBlue's '60-custom.just' (for usage with their 'ujust' command)
 if [ "${USING_UJUST}" == "false" ]; then
     IMPORT_FILE="${DEST_FOLDER}/justfile"
 
     mkdir -p "${DEST_FOLDER}"
     
     if [ ! -f "${IMPORT_FILE}" ]; then
-        cp "${MODULE_DIRECTORY}/justfiles/justfile" "${IMPORT_FILE}"
+        cp "${MODULE_FOLDER}/justfile" "${IMPORT_FILE}"
     fi
 
     if [ ! -f "/usr/bin/bjust" ]; then
-        install -o root -g root -m 755 "${MODULE_DIRECTORY}/justfiles/bjust" /usr/bin/bjust
+        install -o root -g root -m 755 "${MODULE_FOLDER}/bjust" /usr/bin/bjust
     fi
 else
     IMPORT_FILE="/usr/share/ublue-os/just/60-custom.just"
     
     if [ ! -f "${IMPORT_FILE}" ]; then
+        mkdir -p "$(dirname "${IMPORT_FILE}")"
         touch "${IMPORT_FILE}"
     fi
 fi
