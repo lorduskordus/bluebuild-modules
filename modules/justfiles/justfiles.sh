@@ -18,14 +18,17 @@ fi
 
 # If USING_UJUST is specified, validate it
 # else 
-# Determine ujust usage from the base image or the presence of justfile
+# Determine ujust usage from the presence of justfile and import line
 if [ "${USING_UJUST}" != "null" ]; then
     if [[ "${USING_UJUST}" != "true" && "${USING_UJUST}" != "false" ]]; then
         echo "Error: The value of key 'using-ujust': '${USING_UJUST}' is not valid. It needs to be true or false."
         exit 1
     fi
 else
-    if [[ "${BASE_IMAGE}" =~ "ublue-os" || -f "/usr/share/ublue-os/justfile" ]]; then
+    IMPORT_FILE_UBLUE="/usr/share/ublue-os/justfile"
+    IMPORT_LINE_UBLUE="import? \"/usr/share/ublue-os/just/60-custom.just\""
+
+    if grep -q "${IMPORT_LINE_UBLUE}" "${IMPORT_FILE_UBLUE}" 2> /dev/null; then
         USING_UJUST="true"
     else
         USING_UJUST="false"
