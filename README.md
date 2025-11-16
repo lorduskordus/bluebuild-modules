@@ -1,8 +1,11 @@
-# BlueBuild Modules
+<h1 align="center">
+    BlueBuild Modules
+    <br>
+    <a href="https://github.com/lorduskordus/bluebuild-modules/actions/workflows/build.yml">
+        <img src="https://github.com/lorduskordus/bluebuild-modules/actions/workflows/build.yml/badge.svg" alt="build">
+    </a>
+</h1>
 
-This repository contains additional modules and if needed, temporary fixes for [upstream modules](https://github.com/blue-build/modules/), used by my custom [Fedora Atomic Desktop](https://fedoraproject.org/atomic-desktops/) images built with [BlueBuild](https://blue-build.org/).
-
-Used in images:
-
-* [Fedora Base](https://github.com/lorduskordus/fedora-base)
-* [Fedora LK](https://github.com/lorduskordus/fedora-lk)
+<h3 align="center">
+    Additional modules and temporary fixes for <a href="https://github.com/blue-build/modules">upstream BlueBuild modules</a>
+</h3>

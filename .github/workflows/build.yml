@@ -1,4 +1,4 @@
-name: publish-modules
+name: Build & Publish Modules
 on:
   push:
     paths-ignore: # don't rebuild if only documentation has changed
@@ -12,7 +12,7 @@ env:
 
 jobs:
   push-ghcr:
-    name: Build and push image
+    name: Build & Push Image
     runs-on: ubuntu-22.04
     permissions:
       contents: read
